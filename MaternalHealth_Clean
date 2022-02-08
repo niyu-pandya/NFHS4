@@ -1,0 +1,122 @@
+*****************************************************************************************************************************
+*   Project: NFHS-5 Analysis, Anuvaad 										 									  		                                          *
+*   Task: Cleaning up file, adding variables for hypertension, diabetes, overweight, underweight		               					*
+*	Authors: Niharika Pandya (Anuvaad) and Dr. Lindsay Jaacks (University of Edinburgh)								                    		*
+*   Date: 17 Nov 2021																								                                                    		*
+*	Last updated: 22 Dec 2021			   						             	    	                                        									*
+*****************************************************************************************************************************
+clear
+cls
+use "C:\Users\v1npandy\OneDrive - University of Edinburgh\NFHS5\NFHS4_MaternalHealth\IAIR74FL.dta"
+
+gen nfhssurvey = 1
+
+gen fast=0
+     replace fast=1 if sb51>=8 & sb52>=8 /*n=34,441 fasting*/
+		label variable fast "No eating or drinking in past 8 hours"
+
+generate sex=0
+rename v024		state      /*note: I've added state, wealth, rural-urban, and smoking here and for men*/
+rename v012		age
+rename s716 	ever_alc
+rename sb70 	fbg
+rename sdistri 	d_id
+rename caseid 	p_id
+rename s723ab 	diabetes_treatment
+rename v190 	wealth_index
+rename v102 	rural_urban
+rename v457 	anemia
+
+
+replace fbg=. if fbg<40 | fbg>900 /*n=9,541*/
+	label var fbg "Glucose level (mg/dl)"         /*note: I added labels for some of the DHS variables that included units so it's super clear*/
+
+	
+gen long clin_dia=1
+    replace clin_dia=2 if (fbg>=126 & fast==1) | (fbg>=200 & fast==0) | diabetes_treatment==1
+    replace clin_dia=. if fbg==. & diabetes_treatment!=1 
+	/*n=15,045 note: I added & diabetes_treatment!=1 here because if they're missing biomarkers, but are on medications, they should be classified as diabetes*/ 
+		label define yesno  1 "no" 2 "yes"
+		label values fast clin_dia "yesno"
+		label variable clin_dia "Clinical diabetes"
+
+		
+generate agwork=1
+    replace agwork=2 if v717==5
+		label values agwork "yesno"
+		label variable agwork "Respondent works in agriculture"
+
+		
+gen weight=v437/10
+	replace weight=. if weight>900 /*n=11,421 - must be missing data and 999 was entered*/
+		label var weight "Weight (kg)"
+		
+	
+gen height=v438/1000
+	replace height=. if height>9.9 /*n=6,134 - must be missing data and 999 was entered*/
+		label var height "Height (m)"
+		
+
+gen bmi=weight/(height*height)
+	replace bmi=. if bmi>45 
+	replace bmi=. if bmi<10 
+		label var bmi "BMI (kg/m2)"
+		
+		
+gen current_smoke=1
+	replace current_smoke=2 if v463z==0 /*n=73,013*/
+	replace current_smoke=. if v463z==. /*n=0*/
+		label values current_smoke "yesno"
+		label var current_smoke "Respondent currently smokes"
+
+		
+/*NEW*/
+gen sbp_avg=.
+	replace sbp_avg = (sb16s + sb23s + sb27s)/3
+		label var sbp_avg "average of the 3 systolic measurements taken"
+
+		
+gen dbp_avg=. 
+	replace dbp_avg = (sb16d + sb23d + sb27d)/3
+		label var dbp_avg "average of the 3 diastolic measurements taken"
+
+
+***Clinical variables
+gen bmi3cat = .
+		replace bmi3cat = 1 if bmi<18.5
+        replace bmi3cat = 2 if bmi>= 18.5 & bmi<25
+        replace bmi3cat = 3 if bmi>=25
+        replace bmi3cat =. if bmi==. /*confirm this with Lindsay - had 16,203 people with bmi as overweight/obsese that should have been missing*/
+				label define bmicat 1 "Underweight" 2 "Normal Weight" 3 "Overweight/obese"
+				label values bmi3cat bmicat	
+				label variable bmi3cat "BMI category"
+
+/* Clinical hypertension */
+gen long clin_hypt=1
+		replace clin_hypt=2 if (sbp_avg>=140 & sbp_avg<800) | (dbp_avg>=90 & dbp_avg<800)
+		replace clin_hypt=. if sbp_avg>800 & dbp_avg>800 
+				label values clin_hypt "yesno"
+				label variable clin_hypt "Clinical hypertension"
+				
+/*changing pregnant values*/
+gen pregnant = .
+	replace pregnant = 1 if v213 == 0 
+	replace pregnant = 2 if v213 == 1
+	label values pregnant "yesno"
+	label variable pregnant "currently pregnant"
+
+/*changing educat values*/
+gen educat = . 
+		replace educat = 1 if v106 == 0
+		replace educat = 2 if v106 == 1
+		replace educat = 3 if v106 == 2
+		replace educat = 4 if v106 == 3
+		label define educat 1 "no education" 2 "primary" 3 "secondary" 4 "higher"
+		label values educat "educat"
+		label variable educat "Highest educational level"
+
+ 
+drop sb51 sb52 v437 v438 v463z v717 v002 v704 v705 v716 sb16d sb16s sb23d sb23d sb27s sb27d
+
+
+save "C:\Users\v1npandy\OneDrive - University of Edinburgh\NFHS5\NFHS4_MaternalHealth\IAIR74FL_Cleaned_22122021.dta", replace
