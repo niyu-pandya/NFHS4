@@ -1,0 +1,606 @@
+*****************************************************************************************************************************
+*   Project: NFHS-5 Analysis, Anuvaad 										 									                                        		    *
+*   Task: Survey Weights for NFHS-4 Maternal Health														                                    					*
+*	Authors: Niharika Pandya (Anuvaad) and Dr. Lindsay Jaacks (University of Edinburgh)	                    									*
+*   Date: 17 Nov 2021						                                                    																				*
+*	Last updated: 22 Dec 2021		                                        	   						             	    										*
+*****************************************************************************************************************************
+
+
+clear all
+cls
+use "C:\Users\v1npandy\OneDrive - University of Edinburgh\NFHS5\NFHS4_MaternalHealth\IAIR74FL_Cleaned_22122021.dta", clear
+
+keep state age sex educat wealth_index rural_urban pregnant anemia bmi3cat clin_hypt clin_dia v005 v001 v022 nfhssurvey
+replace v022 = v022*0.000001
+*Set survey weights v005=national women's sample weight, cformat(%12.5f)
+svyset [pweight=v005], psu(v001) strata(v022) singleunit(centered)
+
+
+/*cls
+global catvartable1 state educat wealth_index pregnant
+foreach var in $catvartable1 {
+	svy, subpop(nfhssurvey): tab `var' anemia, col pearson
+	svy, subpop(nfhssurvey): tab `var' bmi3cat, col pearson 
+	svy, subpop(nfhssurvey): tab `var' clin_dia, col pearson
+	svy, subpop(nfhssurvey): tab `var' clin_hypt, col pearson
+}
+*/
+
+/*cls
+tab anemia
+tab bmi3cat
+tab clin_dia
+tab clin_hypt
+translate @Results NFHS4_Header.pdf, replace
+*/
+
+/* cls
+svyset [pweight=v005], psu(v001) strata(v022)
+svy, subpop(nfhssurvey): proportion state, cformat(%12.5f) 
+svy, subpop(nfhssurvey): proportion pregnant 
+svy, subpop(nfhssurvey): proportion educat
+svy, subpop(nfhssurvey): proportion wealth_index
+svy, subpop(nfhssurvey): proportion anemia
+svy, subpop(nfhssurvey): proportion clin_dia
+svy, subpop(nfhssurvey): proportion clin_hypt
+svy, subpop(nfhssurvey): proportion bmi3cat
+translate @Results NFHS4_Adjusted_Weights.pdf, replace
+*/
+
+putexcel set "NFHS4_Tabs_MaternalHealth", sheet("NFHS4_MaternalHealth_Tabs_1612") replace
+
+*Name table column headers
+	putexcel B1=("Total"), bottom left bold font(timesnewroman, 11, black)
+	putexcel B2=("Weighted %"), bottom left font(timesnewroman, 11, black)
+	putexcel C2=("LB"), bottom left font(timesnewroman, 11, black)
+	putexcel D2=("UB"), bottom left	font(timesnewroman, 11, black)
+	putexcel E1=("Pregnant No"), bottom left bold font(timesnewroman, 11, black)
+	putexcel E2=("Weighted %"), bottom left font(timesnewroman, 11, black)
+	putexcel F2=("LB"), bottom left font(timesnewroman, 11, black)
+	putexcel G2=("UB"), bottom left font(timesnewroman, 11, black)
+	putexcel H1=("Pregnant Yes"), bottom left bold font(timesnewroman, 11, black)
+	putexcel H2=("Weighted %"), bottom left font(timesnewroman, 11, black)
+	putexcel I2=("LB"), bottom left font(timesnewroman, 11, black)
+	putexcel J2=("UB"), bottom left font(timesnewroman, 11, black)
+	putexcel K1=("Education level 1"), bottom left bold font(timesnewroman, 11, black)
+	putexcel K2=("Weighted %"), bottom left font(timesnewroman, 11, black)
+	putexcel L2=("LB"), bottom left font(timesnewroman, 11, black)
+	putexcel M2=("UB"), bottom left	font(timesnewroman, 11, black)
+	putexcel N1=("Education level 2"), bottom left bold font(timesnewroman, 11, black)
+	putexcel N2=("Weighted %"), bottom left font(timesnewroman, 11, black)
+	putexcel O2=("LB"), bottom left font(timesnewroman, 11, black)
+	putexcel P2=("UB"), bottom left	font(timesnewroman, 11, black)
+	putexcel Q1=("Education level 3"), bottom left bold font(timesnewroman, 11, black)
+	putexcel Q2=("Weighted %"), bottom left font(timesnewroman, 11, black)
+	putexcel R2=("LB"), bottom left font(timesnewroman, 11, black)
+	putexcel S2=("UB"), bottom left font(timesnewroman, 11, black)
+	putexcel T1=("Education level 4"), bottom left bold font(timesnewroman, 11, black)
+	putexcel T2=("Weighted %"), bottom left font(timesnewroman, 11, black)
+	putexcel U2=("LB"), bottom left font(timesnewroman, 11, black)
+	putexcel V2=("UB"), bottom left	font(timesnewroman, 11, black)
+	putexcel W1=("Wealth Index 1"), bottom left bold font(timesnewroman, 11, black)
+	putexcel W2=("Weighted %"), bottom left font(timesnewroman, 11, black)
+	putexcel X2=("LB"), bottom left font(timesnewroman, 11, black)
+	putexcel Y2=("UB"), bottom left	font(timesnewroman, 11, black)
+	putexcel Z1=("Wealth Index 2"), bottom left bold font(timesnewroman, 11, black)
+	putexcel Z2=("Weighted %"), bottom left font(timesnewroman, 11, black)
+	putexcel AA2=("LB"), bottom left font(timesnewroman, 11, black)
+	putexcel AB2=("UB"), bottom left	font(timesnewroman, 11, black)
+	putexcel AC1=("Wealth Index 3"), bottom left bold font(timesnewroman, 11, black)
+	putexcel AC2=("Weighted %"), bottom left font(timesnewroman, 11, black)
+	putexcel AD2=("LB"), bottom left font(timesnewroman, 11, black)
+	putexcel AE2=("UB"), bottom left	font(timesnewroman, 11, black)
+	putexcel AF1=("Wealth Index 4"), bottom left bold font(timesnewroman, 11, black)
+	putexcel AF2=("Weighted %"), bottom left font(timesnewroman, 11, black)
+	putexcel AG2=("LB"), bottom left font(timesnewroman, 11, black)
+	putexcel AH2=("UB"), bottom left	font(timesnewroman, 11, black)
+	putexcel AI1=("Wealth Index 5"), bottom left bold font(timesnewroman, 11, black)
+	putexcel AI2=("Weighted %"), bottom left font(timesnewroman, 11, black)
+	putexcel AJ2=("LB"), bottom left font(timesnewroman, 11, black)
+	putexcel AK2=("UB"), bottom left	font(timesnewroman, 11, black)
+
+putexcel A4=("Anemia"), bottom left bold font(timesnewroman, 11, black)
+local row=5	
+	
+foreach val in 1 2 3 4 { 
+		foreach var in anemia {	
+			
+			svy, subpop(nfhssurvey): prop `var'
+		mat rtable = r(table) 
+			mat `var'_tprop = rtable[1,`val']*100
+			mat `var'_tlb = rtable[3,`val']*100
+			mat `var'_tub = rtable[4,`val']*100
+			
+/*Pregnancy Stauts*/
+*no  = 1
+svy, subpop(nfhssurvey if pregnant==1): prop `var'
+		mat rtable = r(table) 
+			mat `var'_0prop = rtable[1,`val']*100
+			mat `var'_0lb = rtable[3,`val']*100
+			mat `var'_0ub = rtable[4,`val']*100
+		
+*yes = 2
+svy, subpop(nfhssurvey if pregnant == 2): prop `var'
+		mat rtable = r(table) 
+			mat `var'_1prop = rtable[1,`val']*100
+			mat `var'_1lb = rtable[3,`val']*100
+			mat `var'_1ub = rtable[4,`val']*100
+		
+*Education status
+
+svy, subpop(nfhssurvey if educat == 1): prop `var'
+		mat rtable = r(table) 
+			mat `var'_2prop = rtable[1,`val']*100
+			mat `var'_2lb = rtable[3,`val']*100
+			mat `var'_2ub = rtable[4,`val']*100
+		
+
+svy, subpop(nfhssurvey if educat == 2): prop `var'
+		mat rtable = r(table) 
+			mat `var'_3prop = rtable[1,`val']*100
+			mat `var'_3lb = rtable[3,`val']*100
+			mat `var'_3ub = rtable[5,`val']*100
+			
+svy, subpop(nfhssurvey if educat == 3): prop `var'
+		mat rtable = r(table) 
+			mat `var'_4prop = rtable[1,`val']*100
+			mat `var'_4lb = rtable[3,`val']*100
+			mat `var'_4ub = rtable[4,`val']*100
+		
+
+svy, subpop(nfhssurvey if educat == 4): prop `var'
+		mat rtable = r(table) 
+			mat `var'_5prop = rtable[1,`val']*100
+			mat `var'_5lb = rtable[3,`val']*100
+			mat `var'_5ub = rtable[5,`val']*100
+			
+/*wealth index*/
+svy, subpop(nfhssurvey if wealth_index == 1): prop `var'
+		mat rtable = r(table) 
+			mat `var'_6prop = rtable[1,`val']*100
+			mat `var'_6lb = rtable[3,`val']*100
+			mat `var'_6ub = rtable[4,`val']*100
+			
+svy, subpop(nfhssurvey if wealth_index == 2): prop `var'
+		mat rtable = r(table) 
+			mat `var'_7prop = rtable[1,`val']*100
+			mat `var'_7lb = rtable[3,`val']*100
+			mat `var'_7ub = rtable[4,`val']*100	
+			
+svy, subpop(nfhssurvey if wealth_index == 3): prop `var'
+		mat rtable = r(table) 
+			mat `var'_8prop = rtable[1,`val']*100
+			mat `var'_8lb = rtable[3,`val']*100
+			mat `var'_8ub = rtable[4,`val']*100
+			
+svy, subpop(nfhssurvey if wealth_index == 4): prop `var'
+		mat rtable = r(table) 
+			mat `var'_9prop = rtable[1,`val']*100
+			mat `var'_9lb = rtable[3,`val']*100
+			mat `var'_9ub = rtable[4,`val']*100
+			
+svy, subpop(nfhssurvey if wealth_index == 5): prop `var'
+		mat rtable = r(table) 
+			mat `var'_10prop = rtable[1,`val']*100
+			mat `var'_10lb = rtable[3,`val']*100
+			mat `var'_10ub = rtable[4,`val']*100
+
+putexcel B`row'=matrix(`var'_tprop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel C`row'=matrix(`var'_tlb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black) 
+putexcel D`row'=matrix(`var'_tub), nformat(", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel E`row'=matrix(`var'_0prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel F`row'=matrix(`var'_0lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)
+putexcel G`row'=matrix(`var'_0ub), nformat(", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel H`row'=matrix(`var'_1prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel I`row'=matrix(`var'_1lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel J`row'=matrix(`var'_1ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel K`row'=matrix(`var'_2prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel L`row'=matrix(`var'_2lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel M`row'=matrix(`var'_2ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel N`row'=matrix(`var'_3prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel O`row'=matrix(`var'_3lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel P`row'=matrix(`var'_3ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel Q`row'=matrix(`var'_4prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel R`row'=matrix(`var'_4lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel S`row'=matrix(`var'_4ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel T`row'=matrix(`var'_5prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel U`row'=matrix(`var'_5lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel V`row'=matrix(`var'_5ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel W`row'=matrix(`var'_6prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel X`row'=matrix(`var'_6lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel Y`row'=matrix(`var'_6ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel Z`row'=matrix(`var'_7prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel AA`row'=matrix(`var'_7lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel AB`row'=matrix(`var'_7ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel AC`row'=matrix(`var'_8prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel AD`row'=matrix(`var'_8lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel AE`row'=matrix(`var'_8ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel AF`row'=matrix(`var'_9prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel AG`row'=matrix(`var'_9lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel AH`row'=matrix(`var'_9ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel AI`row'=matrix(`var'_10prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel AJ`row'=matrix(`var'_10lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel AK`row'=matrix(`var'_10ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+		}
+		local ++row
+	}
+di "row is `row'"
+
+putexcel A10=("Hypertension"), bottom left bold font(timesnewroman, 11, black)
+local row=11
+
+foreach val in 1 2 { 
+		foreach var in clin_hypt {	
+			
+		svy, subpop(nfhssurvey): prop `var'
+		mat rtable = r(table) 
+			mat `var'_tprop = rtable[1,`val']*100
+			mat `var'_tlb = rtable[3,`val']*100
+			mat `var'_tub = rtable[4,`val']*100
+/*Pregnancy Stauts*/
+*no  = 1
+svy, subpop(nfhssurvey if pregnant==1): prop `var'
+		mat rtable = r(table) 
+			mat `var'_0prop = rtable[1,`val']*100
+			mat `var'_0lb = rtable[3,`val']*100
+			mat `var'_0ub = rtable[4,`val']*100
+		
+*yes = 2
+svy, subpop(nfhssurvey if pregnant == 2): prop `var'
+		mat rtable = r(table) 
+			mat `var'_1prop = rtable[1,`val']*100
+			mat `var'_1lb = rtable[3,`val']*100
+			mat `var'_1ub = rtable[4,`val']*100
+		
+/*Education status*/
+
+svy, subpop(nfhssurvey if educat == 1): prop `var'
+		mat rtable = r(table) 
+			mat `var'_2prop = rtable[1,`val']*100
+			mat `var'_2lb = rtable[3,`val']*100
+			mat `var'_2ub = rtable[4,`val']*100
+		
+
+svy, subpop(nfhssurvey if educat == 2): prop `var'
+		mat rtable = r(table) 
+			mat `var'_3prop = rtable[1,`val']*100
+			mat `var'_3lb = rtable[3,`val']*100
+			mat `var'_3ub = rtable[5,`val']*100
+			
+svy, subpop(nfhssurvey if educat == 3): prop `var'
+		mat rtable = r(table) 
+			mat `var'_4prop = rtable[1,`val']*100
+			mat `var'_4lb = rtable[3,`val']*100
+			mat `var'_4ub = rtable[4,`val']*100
+		
+
+svy, subpop(nfhssurvey if educat == 4): prop `var'
+		mat rtable = r(table) 
+			mat `var'_5prop = rtable[1,`val']*100
+			mat `var'_5lb = rtable[3,`val']*100
+			mat `var'_5ub = rtable[5,`val']*100
+			
+/*wealth index*/
+svy, subpop(nfhssurvey if wealth_index == 1): prop `var'
+		mat rtable = r(table) 
+			mat `var'_6prop = rtable[1,`val']*100
+			mat `var'_6lb = rtable[3,`val']*100
+			mat `var'_6ub = rtable[4,`val']*100
+			
+svy, subpop(nfhssurvey if wealth_index == 2): prop `var'
+		mat rtable = r(table) 
+			mat `var'_7prop = rtable[1,`val']*100
+			mat `var'_7lb = rtable[3,`val']*100
+			mat `var'_7ub = rtable[4,`val']*100	
+			
+svy, subpop(nfhssurvey if wealth_index == 3): prop `var'
+		mat rtable = r(table) 
+			mat `var'_8prop = rtable[1,`val']*100
+			mat `var'_8lb = rtable[3,`val']*100
+			mat `var'_8ub = rtable[4,`val']*100
+			
+svy, subpop(nfhssurvey if wealth_index == 4): prop `var'
+		mat rtable = r(table) 
+			mat `var'_9prop = rtable[1,`val']*100
+			mat `var'_9lb = rtable[3,`val']*100
+			mat `var'_9ub = rtable[4,`val']*100
+			
+svy, subpop(nfhssurvey if wealth_index == 5): prop `var'
+		mat rtable = r(table) 
+			mat `var'_10prop = rtable[1,`val']*100
+			mat `var'_10lb = rtable[3,`val']*100
+			mat `var'_10ub = rtable[4,`val']*100
+			
+putexcel B`row'=matrix(`var'_tprop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel C`row'=matrix(`var'_tlb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black) 
+putexcel D`row'=matrix(`var'_tub), nformat(", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel E`row'=matrix(`var'_0prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel F`row'=matrix(`var'_0lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)
+putexcel G`row'=matrix(`var'_0ub), nformat(", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel H`row'=matrix(`var'_1prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel I`row'=matrix(`var'_1lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel J`row'=matrix(`var'_1ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel K`row'=matrix(`var'_2prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel L`row'=matrix(`var'_2lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel M`row'=matrix(`var'_2ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel N`row'=matrix(`var'_3prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel O`row'=matrix(`var'_3lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel P`row'=matrix(`var'_3ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel Q`row'=matrix(`var'_4prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel R`row'=matrix(`var'_4lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel S`row'=matrix(`var'_4ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel T`row'=matrix(`var'_5prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel U`row'=matrix(`var'_5lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel V`row'=matrix(`var'_5ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel W`row'=matrix(`var'_6prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel X`row'=matrix(`var'_6lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel Y`row'=matrix(`var'_6ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel Z`row'=matrix(`var'_7prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel AA`row'=matrix(`var'_7lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel AB`row'=matrix(`var'_7ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel AC`row'=matrix(`var'_8prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel AD`row'=matrix(`var'_8lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel AE`row'=matrix(`var'_8ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel AF`row'=matrix(`var'_9prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel AG`row'=matrix(`var'_9lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel AH`row'=matrix(`var'_9ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel AI`row'=matrix(`var'_10prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel AJ`row'=matrix(`var'_10lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel AK`row'=matrix(`var'_10ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+		}
+		local ++row
+	}
+di "row is `row'"
+
+putexcel A14=("Diabetes"), bottom left bold font(timesnewroman, 11, black)
+local row=15
+
+foreach val in 1 2 { 
+		foreach var in clin_dia {	
+			
+		svy, subpop(nfhssurvey): prop `var'
+		mat rtable = r(table) 
+			mat `var'_tprop = rtable[1,`val']*100
+			mat `var'_tlb = rtable[3,`val']*100
+			mat `var'_tub = rtable[4,`val']*100
+/*Pregnancy Stauts*/
+*no  = 1
+svy, subpop(nfhssurvey if pregnant==1): prop `var'
+		mat rtable = r(table) 
+			mat `var'_0prop = rtable[1,`val']*100
+			mat `var'_0lb = rtable[3,`val']*100
+			mat `var'_0ub = rtable[4,`val']*100
+		
+*yes = 2
+svy, subpop(nfhssurvey if pregnant == 2): prop `var'
+		mat rtable = r(table) 
+			mat `var'_1prop = rtable[1,`val']*100
+			mat `var'_1lb = rtable[3,`val']*100
+			mat `var'_1ub = rtable[4,`val']*100
+		
+/*Education status*/
+
+svy, subpop(nfhssurvey if educat == 1): prop `var'
+		mat rtable = r(table) 
+			mat `var'_2prop = rtable[1,`val']*100
+			mat `var'_2lb = rtable[3,`val']*100
+			mat `var'_2ub = rtable[4,`val']*100
+		
+
+svy, subpop(nfhssurvey if educat == 2): prop `var'
+		mat rtable = r(table) 
+			mat `var'_3prop = rtable[1,`val']*100
+			mat `var'_3lb = rtable[3,`val']*100
+			mat `var'_3ub = rtable[5,`val']*100
+			
+svy, subpop(nfhssurvey if educat == 3): prop `var'
+		mat rtable = r(table) 
+			mat `var'_4prop = rtable[1,`val']*100
+			mat `var'_4lb = rtable[3,`val']*100
+			mat `var'_4ub = rtable[4,`val']*100
+		
+
+svy, subpop(nfhssurvey if educat == 4): prop `var'
+		mat rtable = r(table) 
+			mat `var'_5prop = rtable[1,`val']*100
+			mat `var'_5lb = rtable[3,`val']*100
+			mat `var'_5ub = rtable[5,`val']*100
+			
+/*wealth index*/
+svy, subpop(nfhssurvey if wealth_index == 1): prop `var'
+		mat rtable = r(table) 
+			mat `var'_6prop = rtable[1,`val']*100
+			mat `var'_6lb = rtable[3,`val']*100
+			mat `var'_6ub = rtable[4,`val']*100
+			
+svy, subpop(nfhssurvey if wealth_index == 2): prop `var'
+		mat rtable = r(table) 
+			mat `var'_7prop = rtable[1,`val']*100
+			mat `var'_7lb = rtable[3,`val']*100
+			mat `var'_7ub = rtable[4,`val']*100	
+			
+svy, subpop(nfhssurvey if wealth_index == 3): prop `var'
+		mat rtable = r(table) 
+			mat `var'_8prop = rtable[1,`val']*100
+			mat `var'_8lb = rtable[3,`val']*100
+			mat `var'_8ub = rtable[4,`val']*100
+			
+svy, subpop(nfhssurvey if wealth_index == 4): prop `var'
+		mat rtable = r(table) 
+			mat `var'_9prop = rtable[1,`val']*100
+			mat `var'_9lb = rtable[3,`val']*100
+			mat `var'_9ub = rtable[4,`val']*100
+			
+svy, subpop(nfhssurvey if wealth_index == 5): prop `var'
+		mat rtable = r(table) 
+			mat `var'_10prop = rtable[1,`val']*100
+			mat `var'_10lb = rtable[3,`val']*100
+			mat `var'_10ub = rtable[4,`val']*100
+			
+putexcel B`row'=matrix(`var'_tprop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel C`row'=matrix(`var'_tlb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black) 
+putexcel D`row'=matrix(`var'_tub), nformat(", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel E`row'=matrix(`var'_0prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel F`row'=matrix(`var'_0lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)
+putexcel G`row'=matrix(`var'_0ub), nformat(", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel H`row'=matrix(`var'_1prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel I`row'=matrix(`var'_1lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel J`row'=matrix(`var'_1ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel K`row'=matrix(`var'_2prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel L`row'=matrix(`var'_2lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel M`row'=matrix(`var'_2ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel N`row'=matrix(`var'_3prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel O`row'=matrix(`var'_3lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel P`row'=matrix(`var'_3ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel Q`row'=matrix(`var'_4prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel R`row'=matrix(`var'_4lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel S`row'=matrix(`var'_4ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel T`row'=matrix(`var'_5prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel U`row'=matrix(`var'_5lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel V`row'=matrix(`var'_5ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel W`row'=matrix(`var'_6prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel X`row'=matrix(`var'_6lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel Y`row'=matrix(`var'_6ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel Z`row'=matrix(`var'_7prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel AA`row'=matrix(`var'_7lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel AB`row'=matrix(`var'_7ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel AC`row'=matrix(`var'_8prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel AD`row'=matrix(`var'_8lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel AE`row'=matrix(`var'_8ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel AF`row'=matrix(`var'_9prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel AG`row'=matrix(`var'_9lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel AH`row'=matrix(`var'_9ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel AI`row'=matrix(`var'_10prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel AJ`row'=matrix(`var'_10lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel AK`row'=matrix(`var'_10ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+		}
+		local ++row
+	}
+di "row is `row'"
+
+putexcel A18=("BMI"), bottom left bold font(timesnewroman, 11, black)
+local row=19
+
+foreach val in 1 2 3 { 
+		foreach var in bmi3cat {	
+			
+		svy, subpop(nfhssurvey): prop `var'
+		mat rtable = r(table) 
+			mat `var'_tprop = rtable[1,`val']*100
+			mat `var'_tlb = rtable[3,`val']*100
+			mat `var'_tub = rtable[4,`val']*100
+/*Pregnancy Stauts*/
+*no  = 1
+svy, subpop(nfhssurvey if pregnant==1): prop `var'
+		mat rtable = r(table) 
+			mat `var'_0prop = rtable[1,`val']*100
+			mat `var'_0lb = rtable[3,`val']*100
+			mat `var'_0ub = rtable[4,`val']*100
+		
+*yes = 2
+svy, subpop(nfhssurvey if pregnant == 2): prop `var'
+		mat rtable = r(table) 
+			mat `var'_1prop = rtable[1,`val']*100
+			mat `var'_1lb = rtable[3,`val']*100
+			mat `var'_1ub = rtable[4,`val']*100
+		
+/*Education status*/
+
+svy, subpop(nfhssurvey if educat == 1): prop `var'
+		mat rtable = r(table) 
+			mat `var'_2prop = rtable[1,`val']*100
+			mat `var'_2lb = rtable[3,`val']*100
+			mat `var'_2ub = rtable[4,`val']*100
+		
+
+svy, subpop(nfhssurvey if educat == 2): prop `var'
+		mat rtable = r(table) 
+			mat `var'_3prop = rtable[1,`val']*100
+			mat `var'_3lb = rtable[3,`val']*100
+			mat `var'_3ub = rtable[5,`val']*100
+			
+svy, subpop(nfhssurvey if educat == 3): prop `var'
+		mat rtable = r(table) 
+			mat `var'_4prop = rtable[1,`val']*100
+			mat `var'_4lb = rtable[3,`val']*100
+			mat `var'_4ub = rtable[4,`val']*100
+		
+
+svy, subpop(nfhssurvey if educat == 4): prop `var'
+		mat rtable = r(table) 
+			mat `var'_5prop = rtable[1,`val']*100
+			mat `var'_5lb = rtable[3,`val']*100
+			mat `var'_5ub = rtable[5,`val']*100
+			
+/*wealth index*/
+svy, subpop(nfhssurvey if wealth_index == 1): prop `var'
+		mat rtable = r(table) 
+			mat `var'_6prop = rtable[1,`val']*100
+			mat `var'_6lb = rtable[3,`val']*100
+			mat `var'_6ub = rtable[4,`val']*100
+			
+svy, subpop(nfhssurvey if wealth_index == 2): prop `var'
+		mat rtable = r(table) 
+			mat `var'_7prop = rtable[1,`val']*100
+			mat `var'_7lb = rtable[3,`val']*100
+			mat `var'_7ub = rtable[4,`val']*100	
+			
+svy, subpop(nfhssurvey if wealth_index == 3): prop `var'
+		mat rtable = r(table) 
+			mat `var'_8prop = rtable[1,`val']*100
+			mat `var'_8lb = rtable[3,`val']*100
+			mat `var'_8ub = rtable[4,`val']*100
+			
+svy, subpop(nfhssurvey if wealth_index == 4): prop `var'
+		mat rtable = r(table) 
+			mat `var'_9prop = rtable[1,`val']*100
+			mat `var'_9lb = rtable[3,`val']*100
+			mat `var'_9ub = rtable[4,`val']*100
+			
+svy, subpop(nfhssurvey if wealth_index == 5): prop `var'
+		mat rtable = r(table) 
+			mat `var'_10prop = rtable[1,`val']*100
+			mat `var'_10lb = rtable[3,`val']*100
+			mat `var'_10ub = rtable[4,`val']*100
+			
+putexcel B`row'=matrix(`var'_tprop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel C`row'=matrix(`var'_tlb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black) 
+putexcel D`row'=matrix(`var'_tub), nformat(", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel E`row'=matrix(`var'_0prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel F`row'=matrix(`var'_0lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)
+putexcel G`row'=matrix(`var'_0ub), nformat(", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel H`row'=matrix(`var'_1prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel I`row'=matrix(`var'_1lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel J`row'=matrix(`var'_1ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel K`row'=matrix(`var'_2prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel L`row'=matrix(`var'_2lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel M`row'=matrix(`var'_2ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel N`row'=matrix(`var'_3prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel O`row'=matrix(`var'_3lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel P`row'=matrix(`var'_3ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel Q`row'=matrix(`var'_4prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel R`row'=matrix(`var'_4lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel S`row'=matrix(`var'_4ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel T`row'=matrix(`var'_5prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel U`row'=matrix(`var'_5lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel V`row'=matrix(`var'_5ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel W`row'=matrix(`var'_6prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel X`row'=matrix(`var'_6lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel Y`row'=matrix(`var'_6ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel Z`row'=matrix(`var'_7prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel AA`row'=matrix(`var'_7lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel AB`row'=matrix(`var'_7ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel AC`row'=matrix(`var'_8prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel AD`row'=matrix(`var'_8lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel AE`row'=matrix(`var'_8ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel AF`row'=matrix(`var'_9prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel AG`row'=matrix(`var'_9lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel AH`row'=matrix(`var'_9ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+putexcel AI`row'=matrix(`var'_10prop), nformat(#.0) font(timesnewroman, 11, black)
+putexcel AJ`row'=matrix(`var'_10lb), nformat("(0.0;(-#.0") font(timesnewroman, 11, black)  
+putexcel AK`row'=matrix(`var'_10ub), nformat (", 0.0);, -0.0) ") font(timesnewroman, 11, black)
+		}
+		local ++row
+	}
+di "row is `row'"
