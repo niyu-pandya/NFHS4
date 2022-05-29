@@ -2,19 +2,17 @@
 *   Project: NFHS-5 Analysis CHILD NUTRITION, Anuvaad 						 									  		    *
 *   Task: Cleaning up file, adding variables for stunting, wasting, sam, overweight, underweight							*
 *   Tip: Run after Macro, and before survey weights																			*
-*	Authors: Niharika Pandya (Anuvaad) and Dr. Lindsay Jaacks (University of Edinburgh)										*
-*   Date: 6 Jan 2022																										*
-*	Last updated: 6 Jan 2022			   						             	    										*
+*   Authors: Niharika Pandya (Anuvaad) and Dr. Lindsay Jaacks (University of Edinburgh)										*
+*   Date: 29 May 2022																										*
+*   Last updated: 29 May 2022			   						             	    										*
 *****************************************************************************************************************************
 cls
 clear all 
 
-set maxvar 10000
+set maxvar 15000
 
 /*Use the WHO survey files after running the macro*/
 use "C:\Users\v1npandy\Documents\WHO_igrowup_workdata\mysurvey_z_rc.dta"
- 
-drop v414b v414c v414d v414h v414q v414r v414u v414w /*na vars*/
  
 gen stunting = . 
 	replace stunting = 2 if _zlen <= -2 
@@ -58,22 +56,6 @@ gen sam = . /*check with Lindsay if this is right, the numbers seem too high*/
 		label value sam "yesno"
 		label var sam "SAM yes no"
 tab sam 
-
-gen breastfed_1hr = . 
-	replace breastfed_1hr = 2 if age <= 36 & time_breastfed == 0
-	replace breastfed_1hr = 2 if age <= 36 & time_breastfed == 100
-	replace breastfed_1hr = 1 if age <= 36 & time_breastfed >= 101
-	replace breastfed_1hr = . if age > 36 | time_breastfed == .
-		label value breastfed_1hr "yesno"
-		label var breastfed_1hr "children under 3 yrs breast within 1 hour yes no"
-
-gen low_birthweight = .
-	replace low_birthweight = 2 if birth_weight < 2.5
-	replace low_birthweight = 1 if birth_weight >= 2.5
-	replace low_birthweight = . if birth_weight == . 
-		label value low_birthweight "yesno"
-		label var low_birthweight "low birthweight yes no"
-
 		
 /*Doing this for the survey set*/
 gen educat = . 
@@ -90,4 +72,4 @@ gen nfhssurvey = 1
 /*Dropping vars not needed in the survey files*/		
 drop reflib datalib reflib temp_measure 
 
-save "C:\Users\v1npandy\Documents\WHO_igrowup_workdata\mysurvey_z_rc_ChildCleaned_06012022.dta", replace
+save "C:\Users\v1npandy\Documents\WHO_igrowup_workdata\mysurvey_z_rc_ChildCleaned_29052022.dta", replace
